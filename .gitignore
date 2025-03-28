@@ -1,0 +1,55 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore environment variables and secrets
+.env
+*.env
+# config.py
+
+# Ignore virtual environment folder
+venv/
+.env/
+
+# Ignore database files
+*.sqlite3
+*.db
+weather.db
+
+# Ignore log files
+*.log
+logs/
+
+# Ignore compiled Python files
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# Ignore Flask cache and session files
+instance/
+.cache/
+.sessions/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Ignore Node.js dependencies (if applicable)
+node_modules/
+
+# Ignore AWS & deployment-related files
+*.pem
+*.crt
+*.key
+terraform.tfstate*
+.cloud/
+.aws/
+
+# Ignore Gunicorn & Nginx temp files
+gunicorn.log
+nginx.conf

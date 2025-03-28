@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-start min-h-screen">
+
+    <h1 class="text-3xl font-bold mb-4">My Location - Weather</h1>
+
+    <!-- Current Weather -->
+    <div class="mb-6">
+        <input id="location" type="text" placeholder="Enter Location" class="p-2 rounded text-black">
+        <button onclick="fetchWeather()" class="mt-2 bg-blue-500 px-4 py-2 rounded">Get Weather</button>
+        <div id="weather-info" class="mt-4 text-center"></div>
+    </div>
+
+    <!-- Weather Forecast -->
+    <h2 class="text-xl mt-6"> My Location (5-Day Forecast)</h2>
+    <div id="forecast" class="mt-4 flex space-x-4 overflow-x-auto"></div>
+
+    <!-- Date Picker and Location for Custom Forecast -->
+    <div class="mt-6">
+        <h2 class="text-2xl font-bold mb-4">View Forcast or History for a specific date</h2>
+        <input id="custom-location" type="text" placeholder="Enter Location" class="p-2 rounded text-black mb-2">
+        <input id="date-picker" type="date" class="p-2 rounded text-black mb-2">
+        <button onclick="fetchCustomWeather()" class="mt-2 bg-green-500 px-4 py-2 rounded">Get Weather for Date</button>
+    </div>
+
+    <!-- Custom Weather Info -->
+    <div id="custom-weather-info" class="mt-8 text-center bg-gray-800 p-4 rounded"></div>
+
+    <script>
+        async function fetchWeather() {
+    let location = document.getElementById("location").value || "Raleigh";
+    let url = `/weather?location=${location}`;
+
+    let response = await fetch(url);
+    let data = await response.json();
+
+    if (data.error) {
+        document.getElementById("weather-info").innerHTML = `<p class="text-red-500">${data.error}</p>`;
+        return;
+    }
+
+    document.getElementById("weather-info").innerHTML = `
+        <h3 class="text-lg font-bold">${data.location} - Today</h3>
+        <p>🌡️ Temperature: ${data.current.temperature}°C (Feels like ${data.current.real_feel}°C)</p>
+        <p>☁️ Weather: ${data.current.weather}</p>
+        <p>💨 Wind Speed: ${data.current.wind_speed} m/s</p>
+        <p>🧭 Wind Direction: ${data.current.wind_direction}°</p>
+        <p>💧 Humidity: ${data.current.humidity}%</p>
+        <p>🎛️ Pressure: ${data.current.pressure} hPa</p>
+        <p>👀 Visibility: ${data.current.visibility} meters</p>
+        <p>🌅 Sunrise: ${data.current.sunrise}</p>
+        <p>🌇 Sunset: ${data.current.sunset}</p>
+    `;
+
+    let forecastHTML = "";
+    data.forecast.forEach(day => {
+        forecastHTML += `
+            <div class="bg-gray-800 p-4 rounded w-45 flex-shrink-0">
+                <h4 class="font-bold">${day.date}</h4>
+                <p>🌡️ Tempeature: ${day.temperature !== undefined ? day.temperature : "N/A"}°C</p>
+                <p>🌬️ Feels Like: ${day.real_feel !== undefined ? day.real_feel : "N/A"}°C</p>
+                <p>☁️ ${day.weather}</p>
+                <p>💨 Wind: ${day.wind_speed} m/s</p>
+            </div>
+        `;
+    });
+
+    document.getElementById("forecast").innerHTML = forecastHTML;
+}
+
+
+        async function fetchCustomWeather() {
+            let location = document.getElementById("custom-location").value;
+            let date = document.getElementById("date-picker").value;
+
+            if (!date) {
+                document.getElementById("custom-weather-info").innerHTML = `<p class="text-red-500">Please select a date.</p>`;
+                return;
+            }
+
+            let formattedDate = new Date(date).toISOString().split('T')[0]; // Converts date to 'YYYY-MM-DD'
+            let url = `/weather?location=${location}&date=${formattedDate}`;
+            
+            let response = await fetch(url);
+            let data = await response.json();
+
+            if (data.error) {
+                document.getElementById("custom-weather-info").innerHTML = `<p class="text-red-500">${data.error}</p>`;
+                return;
+            }
+
+            document.getElementById("custom-weather-info").innerHTML = `
+                <h3 class="text-lg font-bold">${data.location} - ${formattedDate}</h3>
+                <p>🌡️ Min: ${data.temp_min}°C | Max: ${data.temp_max}°C</p>
+                <p>☁️ Weather: ${data.weather}</p>
+                <p>💨 Wind Speed: ${data.wind_speed} m/s</p>
+                <p>💧 Humidity: ${data.humidity}%</p>
+            `;
+        }
+        
+        fetchWeather();  // Load default Raleigh weather on startup
+    </script>
+</body>
+</html>
