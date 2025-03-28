@@ -7,7 +7,7 @@ __pycache__/
 # Ignore environment variables and secrets
 .env
 *.env
-# config.py
+config.py
 
 # Ignore virtual environment folder
 venv/
