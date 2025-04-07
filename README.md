@@ -40,6 +40,23 @@ and presents it with a modern UI using Tailwind CSS
 - python3 app.py
 
 
+## Hosting the application in the AWS EC2 instance
+
+### SSH Connection to aws ec2 and clone the repo from github
+- chmod 400 ~/.ssh/my_weather_key_pair_name.pem
+- ssh -i ~/.ssh/my_weather_key_pair_name.pem ec2-user@44.202.44.48
+- git clone https://github.com/praria/my_dark_sky.git
+
+### run the flask server in aws ec2 insance in foreground
+- flask run --host=0.0.0.0 --port=5000 (runs in the foreground)
+- It stops when SSH session disconnets (stays up as long as terminal session is active)
+
+### run the flask server in aws ec2 insance in background
+- nohup flask run --host=0.0.0.0 --port=5000 > flask.log 2>&1 & (runs in background)
+#### to stop the server in background
+- ps aux | grep flask
+- kill <PID>
+
 ## Usage
 copy the URL from the following file and paste it in the browser:
 my_dark_sky_url.txt
